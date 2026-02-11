@@ -25,7 +25,6 @@ resource "aws_security_group" "ssm_only" {
   description = "No inbound ports, only outbound for S3 and SSM"
   vpc_id      = data.aws_vpc.default.id
 
-  # Ingress is empty! No SSH (Port 22) required.
 
   egress {
     from_port   = 0
@@ -48,13 +47,13 @@ resource "aws_iam_role" "ec2_role" {
   })
 }
 
-# Attach the standard SSM policy
+# SSM policy
 resource "aws_iam_role_policy_attachment" "ssm_core" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-# Attach your custom S3 read policy
+# S3 read policy
 resource "aws_iam_policy" "s3_read" {
   name = "ec2-s3-read-policy"
   policy = jsonencode({
@@ -76,7 +75,6 @@ resource "aws_iam_instance_profile" "profile" {
   role = aws_iam_role.ec2_role.name
 }
 
-# --- 3. Compute: No key_name used ---
 resource "aws_instance" "this" {
   ami                    = data.aws_ami.amazon_linux.id
   instance_type          = "t3.micro"
@@ -92,6 +90,6 @@ resource "aws_instance" "this" {
     chown -R ec2-user:ec2-user /home/ec2-user/s3-downloads
   EOF
 
-  tags = { Name = "Prod_S3_Downloader_NoKey" }
+  tags = { Name = "EC2_READ_s3" }
 }
 
