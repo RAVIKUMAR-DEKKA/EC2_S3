@@ -28,11 +28,11 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      # - name: Terraform Validate
-      #   run: terraform validate
+      - name: Terraform Validate
+        run: terraform validate
 
-      # - name: Terraform Plan
-      #   run: terraform plan -input=false
+      - name: Terraform Plan
+        run: terraform plan -input=false
 
       - name: Destroy with variables
         run: terraform destroy -auto-approve
